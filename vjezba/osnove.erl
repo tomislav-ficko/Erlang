@@ -1,0 +1,69 @@
+%%%-------------------------------------------------------------------
+%%% @author Tomi
+%%% @copyright (C) 2020, Ficko
+%%%
+%%% Created : 16. Oct 2020 11:40
+%%%-------------------------------------------------------------------
+-module(osnove).
+-author("Tomi").
+
+-export([run/0]).
+
+run() ->
+  basics(),
+  atom_example().
+  
+%                               Aritmetički izrazi
+% _____________________________________________________________________________________
+% | Operator | Vrsta podatka | Prioritet |                    Opis                     |
+% |--------------------------|-----------|---------------------------------------------|
+% |   + X    |      broj     |     1     |                 pozitivan X                 |
+% |   - X    |      broj     |           |                 negativan X                 |
+% |----------|---------------|-----------|---------------------------------------------|
+% |  X * Y   |      broj     |           |                  množenje                   |
+% |  X / Y   |      broj     |           |                 dijeljenje                  |
+% | bnot X   |  cijeli broj  |     2     |           operacija NE nad bitovima         |
+% | X div Y  |  cijeli broj  |           |             cjelobrojno dijeljenje          |
+% | X rem Y  |  cijeli broj  |           |        ostatak cjelobrojnog dijeljenja      |
+% | X band Y |  cijeli broj  |           |           operacija I između bitova         |
+% |------------------------- |-----------|---------------------------------------------|
+% |  X + Y   |      broj     |           |                  zbrajanje                  |
+% |  X - Y   |      broj     |           |                 oduzimanje                  |
+% | X bor Y  |  cijeli broj  |     3     |          operacija ILI između bitova        |
+% | X bxor Y |  cijeli broj  |           |        operacija EX-ILI između bitova       |
+% | X bsl N  |  cijeli broj  |           | aritm. pomicanje bitova za N mjesta ulijevo |
+% | X bsr N  |  cijeli broj  |           |     pomicanje bitova za N mjesta udesno     |
+% |__________________________|___________|_____________________________________________|
+
+%                 Operatori uspoređivanja
+%  ___________________________________________________
+%  | Operator |                Opis                   |
+%  |----------|---------------------------------------|
+%  |    >     |                veći                   |
+%  |    >=    |            veći ili jednak            |
+%  |    <     |                manji                  |
+%  |    =<    |            manji ili jednak           |
+%  |    ==    |               jednak                  |
+%  |    /=    |              različit                 |
+%  |    =:=   |    identičan (1 =:= 1.0 daje false)   | -> Moraju biti jednaki i po vrijednosti i po tipu (cijeli/realni)
+%  |    =/=   |  nije identičan (1 =/= 1.0 daje true) |
+%  |__________|_______________________________________|
+
+%%% ------ Osnove ---------
+basics() ->
+  io:format("~nHex broj ff u dec obliku je ~w~n", [16#ff]),
+  io:format("Oktalni broj 20 u dec obliku je ~w~n", [8#20]), % baza moze biti u rasponu od 2 do 36
+  io:format("Pretvaranjem broja 3.6 u cijeli dobivamo ~w~n", [trunc(3.6)]),
+  io:format("Zaokruzivanjem broja 3.6 na cijeli dobivamo ~w~n", [round(3.6)]),
+  io:format("Pretvaranjem broja 3 u realni dobivamo ~w~n", [float(3)]).
+
+
+%%% ------ Rad s atomima ---------
+% Atomi služe kao konstante koje ne mijenjamo.
+% Moraju imali malo početno slovo, inače bi bili varijable.
+% Ako trebamo imati veliko početno slovo u atomu, onda koristimo jednostruke navodnike.
+
+atom_example() ->
+  io:format("~nOvo je primjer obicnog atoma: ~w~n", [atom]),                    % Argumenti uvijek moraju biti navedeni unutar liste ([])
+  io:format("Ovo je primjer atoma s velikim pocetnim slovom i bjelinama: ~w~n", ['Atom s bjelinama']),
+  io:format("Ovo je primjer atoma s podvlakama: ~w~n~n", [atom_s_podvlakama]).  % Uobičajeno je koristiti podvlake
