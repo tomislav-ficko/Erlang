@@ -7,7 +7,6 @@
 -module('n-torke').
 -author("Tomi").
 
-%% API
 -export([run/0]).
 
 %%% ------ Rad s n-torkama ---------

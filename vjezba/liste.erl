@@ -4,13 +4,10 @@
 %%% 
 %%% Created : 16. Oct 2020 11:37
 %%%-------------------------------------------------------------------
--module(liste).             % Deklaracija modula
+-module(liste).
 -author("Tomi").
 
-%% API
--export([run/0]).           % Deklaracija funkcija koje se mogu pozvati izvan modula
-%-import(io, [format/1]).   % Deklaracija funkcija koje se mogu pozvati u skraćenom obliku
--vsn(1.0).                  % Verzija modula
+-export([run/0]).
 
 %%% ------ Rad s listama ---------
 
@@ -30,7 +27,7 @@ list_example() ->
   io:format("Tekst je ~p, a ASCII vrijednosti znakova su ~w~n~n", [Tekst, Tekst]), % ~p daje stvarnu vrijednost teksta, a ~w ispisuje ASCII vrijednosti
 
   Inicijali = "FER",
-  [X, Y, Z] = Inicijali, % Podudaranje uzoraka
+  [X, Y, Z] = Inicijali, % Podudaranje uzoraka ili dekonstrukcija
   io:format("Varijabla X ima vrijednost ~w, a ASCII vrijednost znaka F je ~w~n", [X, $F]), % U ovom slucaju je svejedno stavimo li ~w ili ~p
   io:format("Varijabla Y ima vrijednost ~p, a ASCII vrijednost znaka E je ~p~n", [Y, $E]),
   io:format("Varijabla Z ima vrijednost ~p, a ASCII vrijednost znaka R je ~p~n~n", [Z, $R]),

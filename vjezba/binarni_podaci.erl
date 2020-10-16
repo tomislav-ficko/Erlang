@@ -4,10 +4,10 @@
 %%%
 %%% Created : 16. Oct 2020 11:40
 %%%-------------------------------------------------------------------
--module(binarni_podaci).  % Deklaracija modula
+-module(binarni_podaci).
 -author("Tomi").
 
--export([run/0]).         % Deklaracija funkcija koje se mogu pozvati izvan modula
+-export([run/0]).
 
 %%% ------ Rad s binarnim podacima ---------
 

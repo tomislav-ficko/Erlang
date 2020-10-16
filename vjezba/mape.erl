@@ -4,13 +4,10 @@
 %%% 
 %%% Created : 16. Oct 2020 11:42
 %%%-------------------------------------------------------------------
--module(mape).            % Deklaracija modula
+-module(mape).
 -author("Tomi").
 
-%% API
--export([run/0]).         % Deklaracija funkcija koje se mogu pozvati izvan modula
--import(io, [format/1]).  % Deklaracija funkcija koje se mogu pozvati u skraćenom obliku
--vsn(1.0).                % Verzija modula
+-export([run/0]).
 
 %%% ------ Rad s mapama ---------
 

@@ -4,10 +4,12 @@
 %%%
 %%% Created : 16. Oct 2020 11:40
 %%%-------------------------------------------------------------------
--module(osnove).
+-module(osnove).            % Deklaracija modula
 -author("Tomi").
 
--export([run/0]).
+-export([run/0]).           % Deklaracija funkcija koje se mogu pozvati izvan modula
+%-import(io, [format/1]).   % Deklaracija funkcija koje se mogu pozvati u skraćenom obliku
+-vsn(1.0).                  % Verzija modula
 
 run() ->
   basics(),
