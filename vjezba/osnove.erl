@@ -8,7 +8,7 @@
 -author("Tomi").
 
 -export([run/0]).           % Deklaracija funkcija koje se mogu pozvati izvan modula
-%-import(io, [format/1]).   % Deklaracija funkcija koje se mogu pozvati u skraćenom obliku
+-import(io, [format/2]).    % Deklaracija funkcija koje se mogu pozvati u skraćenom obliku
 -vsn(1.0).                  % Verzija modula
 
 run() ->
@@ -53,11 +53,11 @@ run() ->
 
 %%% ------ Osnove ---------
 basics() ->
-  io:format("~nHex broj ff u dec obliku je ~w~n", [16#ff]),
-  io:format("Oktalni broj 20 u dec obliku je ~w~n", [8#20]), % baza moze biti u rasponu od 2 do 36
-  io:format("Pretvaranjem broja 3.6 u cijeli dobivamo ~w~n", [trunc(3.6)]),
-  io:format("Zaokruzivanjem broja 3.6 na cijeli dobivamo ~w~n", [round(3.6)]),
-  io:format("Pretvaranjem broja 3 u realni dobivamo ~w~n", [float(3)]).
+  format("~nHex broj ff u dec obliku je ~w~n", [16#ff]),
+  format("Oktalni broj 20 u dec obliku je ~w~n", [8#20]),                    % Baza može biti u rasponu od 2 do 36
+  format("Pretvaranjem broja 3.6 u cijeli dobivamo ~w~n", [trunc(3.6)]),
+  format("Zaokruzivanjem broja 3.6 na cijeli dobivamo ~w~n", [round(3.6)]),
+  format("Pretvaranjem broja 3 u realni dobivamo ~w~n", [float(3)]).
 
 
 %%% ------ Rad s atomima ---------
@@ -66,6 +66,6 @@ basics() ->
 % Ako trebamo imati veliko početno slovo u atomu, onda koristimo jednostruke navodnike.
 
 atom_example() ->
-  io:format("~nOvo je primjer obicnog atoma: ~w~n", [atom]),                    % Argumenti uvijek moraju biti navedeni unutar liste ([])
-  io:format("Ovo je primjer atoma s velikim pocetnim slovom i bjelinama: ~w~n", ['Atom s bjelinama']),
-  io:format("Ovo je primjer atoma s podvlakama: ~w~n~n", [atom_s_podvlakama]).  % Uobičajeno je koristiti podvlake
+  format("~nOvo je primjer obicnog atoma: ~w~n", [atom]),                    % Argumenti uvijek moraju biti navedeni unutar liste ([])
+  format("Ovo je primjer atoma s velikim pocetnim slovom i bjelinama: ~w~n", ['Atom s bjelinama']),
+  format("Ovo je primjer atoma s podvlakama: ~w~n~n", [atom_s_podvlakama]).  % Uobičajeno je koristiti podvlake
