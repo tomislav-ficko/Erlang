@@ -22,13 +22,17 @@ run() ->
     start().
 
 start() -> 
-    Pid2 = spawn(procesi, loop, []),
+    Pid2 = spawn(procesi_i_poruke, loop, []),
     Pid2!{self(), poruka},
     receive
         {Pid2, Msg} ->
             io:format("Inside start()! From: ~w Message: ~w~n", [Pid2, Msg])
     end,
-    Pid2!abc, % TODO zašto ide u automatski u inbox?
+    Pid2!abc,
+    receive
+        after 1000 ->
+            true
+    end,
     {_, QueueSize} = erlang:process_info(Pid2, message_queue_len),  % Funkcija za dohvaćanje količine poruka u inboxu (poruke koje nisu obrađene)
     io:format("-> Size of ~w inbox is ~w~n", [Pid2, QueueSize]),
     Result = Pid2!stop,
