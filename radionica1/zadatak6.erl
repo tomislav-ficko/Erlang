@@ -12,9 +12,11 @@
 
 % Zadatak: Napraviti stablo (funkcije dodavanja, pretraživanja elemenata u stablu) {Key, Value}
 %           - razmisliti kako organizirati stablo
+%
+% Koristim strukturu n-torki unutar n-torke: { {"Vlado", "Kalember"}, {"Luka", "Nizetic"}, {{"Tose", "Proeski"}, {"Jurica", "Paden"}} }
 
 run() -> 
-    InitialTree = {}, % Primjer strukture: { {"Vlado", "Kalember"}, {"Luka", "Nizetic"}, {{"Tose", "Proeski"}, {"Jurica", "Paden"}} }
+    InitialTree = {},
     Tree = input_loop(InitialTree),
 
     Input = get_line("Please enter a key to search for: "),
