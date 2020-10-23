@@ -13,7 +13,7 @@
 % Zadatak: Napraviti stablo (funkcije dodavanja, pretraživanja elemenata u stablu) {Key, Value}
 %           - razmisliti kako organizirati stablo
 %
-% Koristim strukturu n-torki unutar n-torke: { {"Vlado", "Kalember"}, {"Luka", "Nizetic"}, {{"Tose", "Proeski"}, {"Jurica", "Paden"}} }
+% Koristim strukturu n-torki unutar n-torke: { RootTuple, LeftChildTuple, RightChildTuple }
 
 run() -> 
     InitialTree = {},
