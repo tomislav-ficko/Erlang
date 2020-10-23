@@ -4,7 +4,7 @@
 %%% 
 %%% Created : Oct 18, 2020 13:01
 %%%-------------------------------------------------------------------
--module(zadatak3).
+-module(r1_zadatak3).
 -author("Tomi").
 
 -export([run/0]).
