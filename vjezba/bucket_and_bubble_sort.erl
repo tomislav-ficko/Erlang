@@ -2,12 +2,12 @@
 %%% @author Tomi
 %%% @copyright (C) 2020, Ficko
 %%% 
-%%% Created : Oct 26, 2020 10:31
+%%% Created : Oct 26, 2020 11:31
 %%%-------------------------------------------------------------------
--module(red_black_tree).
+-module(bucket_and_bubble_sort).
 -author("Tomi").
 
--export([run/0, bucket_sort/1]).
+-export([run/0, bucket_sort/1, bubble_sort/1]).
 -import(io, [get_line/1, format/1, format/2]).
 
 % Task: Create implementation of the bucket sort algorithm, using bubble sort.
@@ -24,5 +24,10 @@ run() ->
     todo.
 
 bucket_sort(List) ->
+
+    todo.
+
+bubble_sort(List) ->
+    % Used for sorting individual buckets
 
     todo.
