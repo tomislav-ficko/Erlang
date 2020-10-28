@@ -2,12 +2,12 @@
 %%% @author Tomi
 %%% @copyright (C) 2020, Ficko
 %%% 
-%%% Created : Oct 26, 2020 11:31
+%%% Created : Oct 28, 2020 10:01
 %%%-------------------------------------------------------------------
--module(bucket_and_bubble_sort).
+-module(distributed_bucket_and_bubble_sort).
 -author("Tomi").
 
--export([run/0, bucket_sort/1]).
+-export([run/0, bucket_sort/1, process_loop/0]).
 -import(io, [get_line/1, format/1, format/2]).
 
 % Task: Create implementation of the bucket sort algorithm, using bubble sort.
@@ -22,7 +22,7 @@
 
 
 run() ->
-    List = [5, 34, 21, 6, 12, 21, 66, 43, 9],
+    List = [5, 34, 21, 6, 12, 21, 66, 43, 9, 31],
     SortedList = bucket_sort(List),
     format("Input list: ~p.~n", [List]),
     format("Sorted list: ~p.~n", [SortedList]).
@@ -34,12 +34,38 @@ bucket_sort(List) ->
 
     FilledBuckets = insert_into_buckets(List, FirstIndex, MaxValue, BucketList),
 
-    SortedBuckets = sort_individual_buckets(FilledBuckets, FirstIndex),
+    ProcessList = create_processes(),
+    SortedBuckets = sort_individual_buckets(FilledBuckets, FirstIndex, ProcessList),
 
     lists:flatten(SortedBuckets). % Return the elements inside the sorted buckets as a single list
 
 create_buckets() ->
     [[], [], [], [], []]. % This sets the number of buckets to five
+
+create_processes() ->
+    % Each node is created in a separate terminal using "erl -pa ./ -sname nodeX -setcookie cookie"
+
+    Node1 = 'node1@Acer-Swift-3',
+    Node2 = 'node2@Acer-Swift-3',
+    Node3 = 'node3@Acer-Swift-3',
+    Node4 = 'node4@Acer-Swift-3',
+    Node5 = 'node5@Acer-Swift-3',
+    Module = module_info(module),
+
+    P1 = spawn(Node1, Module, process_loop, []),
+    P2 = spawn(Node2, Module, process_loop, []),
+    P3 = spawn(Node3, Module, process_loop, []),
+    P4 = spawn(Node4, Module, process_loop, []),
+    P5 = spawn(Node5, Module, process_loop, []),
+
+    format("~nConnections to nodes:~n"),
+    format("~p: ~p~n", [Node1, P1]),
+    format("~p: ~p~n", [Node2, P2]),
+    format("~p: ~p~n", [Node3, P3]),
+    format("~p: ~p~n", [Node4, P4]),
+    format("~p: ~p~n~n", [Node5, P5]),
+
+    [P1, P2, P3, P4, P5].
 
 insert_into_buckets(List, Index, MaxValue, BucketList) ->
     NoOfBuckets = length(BucketList),
@@ -79,24 +105,41 @@ update_bucket_list(BucketList, UpdatedBucket, UpdatedBucketIndex) ->
     % Return the new concatenated list
     StartingBuckets ++ [UpdatedBucket] ++ EndingBuckets.
 
-sort_individual_buckets(BucketList, CurrentBucketIndex) ->
+sort_individual_buckets(BucketList, CurrentIndex, ProcessList) ->
     NoOfBuckets = length(BucketList),
     if
-        CurrentBucketIndex =< NoOfBuckets ->
-            CurrentBucket = lists:nth(CurrentBucketIndex, BucketList),
-            NewCurrentBucket = bubble_sort(CurrentBucket),
+        CurrentIndex =< NoOfBuckets ->
+            CurrentBucket = lists:nth(CurrentIndex, BucketList),
+            
+            Pid = lists:nth(CurrentIndex, ProcessList),
+            Pid!{self(), CurrentBucket}, % We are sending the contents of the current bucket to the process for sorting
+            receive
+                {Pid, NewCurrentBucket} ->
+                    NewBucketList = update_bucket_list(BucketList, NewCurrentBucket, CurrentIndex),
 
-            NewBucketList = update_bucket_list(BucketList, NewCurrentBucket, CurrentBucketIndex),
-
-            BucketsToReturn = sort_individual_buckets(NewBucketList, CurrentBucketIndex + 1),
-            if
-                BucketsToReturn == end_reached ->
-                    NewBucketList;
-                BucketsToReturn /= end_reached ->
-                    BucketsToReturn
+                    BucketsToReturn = sort_individual_buckets(NewBucketList, CurrentIndex + 1, ProcessList),
+                    if
+                        BucketsToReturn == end_reached ->
+                            NewBucketList;
+                        BucketsToReturn /= end_reached ->
+                            BucketsToReturn
+                    end
             end;
-        CurrentBucketIndex > NoOfBuckets ->
+
+        CurrentIndex > NoOfBuckets ->
             end_reached
+    end.
+
+process_loop() ->
+    receive
+        {From, Bucket} ->
+            format("-> ~p: Beginning sorting ~w~n", [self(), Bucket]),
+            SortedBucket = bubble_sort(Bucket),
+            From!{self(), SortedBucket},
+            process_loop();
+        stop ->
+            format("Process ~w stopping.", [self()]),
+            true
     end.
 
 bubble_sort(List) when length(List) =< 1 ->
