@@ -9,7 +9,6 @@
 
 -export([run/0, process_loop/1, balancer/1, index_of/2]).
 -import(io, [get_line/2, format/1, format/2]).
--import(r1_zadatak7, [find_element/1]).
 -import(string, [uppercase/1]).
 
 % Zadatak 1: Napraviti proces koji prima poruke za stavljanje, brisanje, zamjenu i pretraživanje 
@@ -21,7 +20,7 @@
 % Zadatak 5: Baciti iznimku ako je neki proces ubijen.
 
 run() ->
-    %test1().
+    test1(),
     test2().
 
 test1() ->
