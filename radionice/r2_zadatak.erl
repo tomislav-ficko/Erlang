@@ -13,6 +13,7 @@
 
 % Zadatak 1: Napraviti proces koji prima poruke za stavljanje, brisanje, zamjenu i pretraživanje 
 % .. mape (ključ n-torka ime i prezime, vrijednost je lista prijatelja - n-torka ime i prezime).
+% Zadatak 2: Napraviti sekvencijski API za proces.
 
 run() ->
     start().
@@ -22,87 +23,82 @@ start() ->
     % Prilikom pokretanja procesa šaljemo praznu mapu koja će se puniti
     Pid = spawn(module_info(module), process_loop, [EmptyMap]),
     
-    % --------- INSERT ---------
-    K = {a, b},
-    V = [{b,c}, {c,d}],
-    Pid!{self(), insert, K, V},
-    receive
-        {Pid, insert_done} ->
-            format("-> Inside start(), insertion done!~n")
-    end,
+    Key = {a, b},
+    Value = [{b,c}, {c,d}],
+    api_insert(Pid, Key, Value),
 
-    % --------- UPDATE ---------
-    NewV = [{e,f}],
-    Pid!{self(), update, K, NewV},
-    receive
-        {Pid, update_done} ->
-            format("-> Inside start(), update done!~n")
-    end,
+    NewValue = [{e,f}],
+    api_update(Pid, Key, NewValue),
 
-    % --------- GET ---------
-    Pid!{self(), get, K},
-    receive
-        {Pid, get_done, Value} ->
-            format("The requested value for key ~p is ~p.~n", [K, Value]);
-        {Pid, not_present} ->
-            format("There is no value associated with key ~p.~n", [K])
-    end,
+    api_get(Pid, Key),
 
-    % --------- DELETE ---------
-    Pid!{self(), delete, K},
-    receive
-        {Pid, delete_done} ->
-            format("-> Inside start(), deletion done!~n")
-    end,
+    api_delete(Pid, Key),
+
+    api_get(Pid, Key),
     
-    % --------- GET ---------
-    Pid!{self(), get, K},
-    receive
-        {Pid, get_done, Val} ->
-            if
-                Val == not_present ->
-                    format("The key ~p does not exist.~n!", [K]);
-                true ->
-                    format("The requested value for key ~p is ~p.~n!", [K, Val])
-            end
-    end,
-
-    Pid!{stop}.
+    Pid!{stop},
+    ok.
 
 process_loop(Map) ->
     receive
         {From, insert, Key, Value} ->
-            format("---> Inside process_loop(), beginning insertion!~n"),
             NewMap = maps:put(Key, Value, Map),
             From!{self(), insert_done},
             process_loop(NewMap);
 
         {From, delete, Key} ->
-            format("---> Inside process_loop(), beginning deletion!~n"),
             NewMap = maps:remove(Key, Map),
             From!{self(), delete_done},
             process_loop(NewMap);
             
         {From, update, Key, Value} ->
-            format("---> Inside process_loop(), beginning update!~n"),
             NewMap = maps:put(Key, Value, Map),
             From!{self(), update_done},
             process_loop(NewMap);
 
         {From, get, Key} ->
-            format("---> Inside process_loop(), beginning search!~n"),
-            Value = maps:get(Key, Map, not_present),
+            Value = maps:get(Key, Map, key_not_present), % The third argument will be returned if the key isn't found
             From!{self(), get_done, Value},
             process_loop(Map);
 
         stop ->
-            io:format("---> Inside process_loop(), stopping process ~p.~n", [self()]),
             true
     end.
 
+api_get(Pid, Key) ->
+    Pid!{self(), get, Key},
+    receive
+        {Pid, get_done, Value} ->
+            if
+                Value == key_not_present ->
+                    format("-> API: The key ~p does not exist!~n", [Key]),
+                    key_not_present;
+                true ->
+                    format("-> API: Retrieval done!~n"),
+                    Value
+            end
+    end.
 
-% Zadatak 2: Napraviti sekvencijski API za proces.
+api_insert(Pid, Key, Value) ->
+    Pid!{self(), insert, Key, Value},
+    receive
+        {Pid, insert_done} ->
+            format("-> API: Insertion done!~n")
+    end.
 
+api_update(Pid, Key, Value) ->
+    Pid!{self(), update, Key, Value},
+    receive
+        {Pid, update_done} ->
+            format("-> API: Update done!~n")
+    end.
+
+api_delete(Pid, Key) ->
+    Pid!{self(), delete, Key},
+    receive
+        {Pid, delete_done} ->
+            format("-> API: Deletion done!~n")
+    end.
 
 % Zadatak 3: Raspodijeliti odgovornost na dva procesa koji svaki obrađuje dio ključeva i glavni proces koji zna preusmjeriti zahtjeve.
 
@@ -112,5 +108,3 @@ process_loop(Map) ->
 
 
 % Zadatak 5: Baciti iznimku ako je neki proces ubijen.
-
-
