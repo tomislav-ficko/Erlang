@@ -7,8 +7,9 @@
 -module(r2_zadatak).
 -author("Tomi").
 
--export([run/0, loop/1]).
+-export([run/0, process_loop/1]).
 -import(io, [get_line/2, format/1, format/2]).
+-import(r1_zadatak7, [find_element/1]).
 
 % Zadatak 1: Napraviti proces koji prima poruke za stavljanje, brisanje, zamjenu i pretraživanje 
 % .. mape (ključ n-torka ime i prezime, vrijednost je lista prijatelja - n-torka ime i prezime).
@@ -17,39 +18,90 @@ run() ->
     start().
 
 start() ->
-    Pid = spawn(zadatak, loop, [#{}]), % Prilikom pokretanja procesa šaljemo praznu mapu koja će se puniti
-    Pid!{self(), {put, {'Eric', 'Clapton'}, [{'Bob','Marley'}, {'Dean', 'Martin'}]}},
-
-    todo.
-
-loop(Map) ->
+    EmptyMap = maps:new(),
+    % Prilikom pokretanja procesa šaljemo praznu mapu koja će se puniti
+    Pid = spawn(module_info(module), process_loop, [EmptyMap]),
     
+    % --------- INSERT ---------
+    K = {a, b},
+    V = [{b,c}, {c,d}],
+    Pid!{self(), insert, K, V},
     receive
-        {From, {put, Key, Value}} ->
-            format("-> Inside loop(), beginning insertion!"),
-            NewMap = maps:put(Key, Value, Map), % TODO Figure out how to save the new instances of the map inside this function
-            From!{self(), todo}
-            loop(NewMap);
+        {Pid, insert_done} ->
+            format("-> Inside start(), insertion done!~n")
+    end,
 
-        {From, {delete, Key}} ->
-            format("-> Inside loop(), beginning deletion!"),
-            Map = maps:remove(Key, Map),
-            From!{self(), todo};
+    % --------- UPDATE ---------
+    NewV = [{e,f}],
+    Pid!{self(), update, K, NewV},
+    receive
+        {Pid, update_done} ->
+            format("-> Inside start(), update done!~n")
+    end,
+
+    % --------- GET ---------
+    Pid!{self(), get, K},
+    receive
+        {Pid, get_done, Value} ->
+            format("The requested value for key ~p is ~p.~n", [K, Value]);
+        {Pid, not_present} ->
+            format("There is no value associated with key ~p.~n", [K])
+    end,
+
+    % --------- DELETE ---------
+    Pid!{self(), delete, K},
+    receive
+        {Pid, delete_done} ->
+            format("-> Inside start(), deletion done!~n")
+    end,
+    
+    % --------- GET ---------
+    Pid!{self(), get, K},
+    receive
+        {Pid, get_done, Val} ->
+            if
+                Val == not_present ->
+                    format("The key ~p does not exist.~n!", [K]);
+                true ->
+                    format("The requested value for key ~p is ~p.~n!", [K, Val])
+            end
+    end,
+
+    Pid!{stop}.
+
+process_loop(Map) ->
+    receive
+        {From, insert, Key, Value} ->
+            format("---> Inside process_loop(), beginning insertion!~n"),
+            NewMap = maps:put(Key, Value, Map),
+            From!{self(), insert_done},
+            process_loop(NewMap);
+
+        {From, delete, Key} ->
+            format("---> Inside process_loop(), beginning deletion!~n"),
+            NewMap = maps:remove(Key, Map),
+            From!{self(), delete_done},
+            process_loop(NewMap);
             
-        {From, {update, Key, Value}} ->
-            format("-> Inside loop(), beginning update!"),
-            Map = maps:put(Key, Value, Map),
-            From!{self(), todo};
+        {From, update, Key, Value} ->
+            format("---> Inside process_loop(), beginning update!~n"),
+            NewMap = maps:put(Key, Value, Map),
+            From!{self(), update_done},
+            process_loop(NewMap);
 
-        {From, {get, Key}} ->
-            format("-> Inside loop(), beginning search!"),
-            Value = maps:get(Key, Map),
-            From!{self(), Value};
-        {From, {}}
+        {From, get, Key} ->
+            format("---> Inside process_loop(), beginning search!~n"),
+            Value = maps:get(Key, Map, not_present),
+            From!{self(), get_done, Value},
+            process_loop(Map);
 
+        stop ->
+            io:format("---> Inside process_loop(), stopping process ~p.~n", [self()]),
+            true
     end.
 
-% Zadatak 2: Napraviti sekvencijalni API za proces.
+
+% Zadatak 2: Napraviti sekvencijski API za proces.
 
 
 % Zadatak 3: Raspodijeliti odgovornost na dva procesa koji svaki obrađuje dio ključeva i glavni proces koji zna preusmjeriti zahtjeve.
