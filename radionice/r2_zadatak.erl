@@ -18,6 +18,7 @@
 % Zadatak 3: Raspodijeliti odgovornost na dva procesa koji svaki obrađuje dio ključeva i glavni proces koji zna preusmjeriti zahtjeve.
 % Zadatak 4: Napraviti funkciju koja prima osobu kao ključ i vraća listu prijatelja s određenim brojem skokova 
 % .. npr. za broj skokova 2 nađe i prijatelje od prijatelja. U listi se ne smije nalaziti više puta ista osoba.
+% Zadatak 5: Baciti iznimku ako je neki proces ubijen.
 
 run() ->
     %test1().
@@ -131,6 +132,13 @@ balancer(ProcessList) ->
             WorkerIndex = get_index_of_worker(uppercase([FirstLetter]), length(ProcessList)),
 
             Pid = lists:nth(WorkerIndex, ProcessList),
+            ProcessAlive = is_process_alive(Pid),
+            if
+                ProcessAlive == false ->
+                    throw({process_killed});
+                true ->
+                    ok
+            end,
             
             if
                 Action == insert ->
@@ -242,5 +250,3 @@ api_delete(Pid, Key) ->
         {Pid, delete_done} ->
             format("-> API: Deletion done!~n")
     end.
-
-% Zadatak 5: Baciti iznimku ako je neki proces ubijen.
