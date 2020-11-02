@@ -29,3 +29,8 @@
 % -export([init/1, print/2, bla/0]).
 %
 % init(Arg) -> ...
+
+
+% Koncept supervisor/worker u OTP-u:
+%           - Supervisor je vršni proces koji upravlja radnicima i implementira strategiju pokretanja radnika
+%           - Supervisor prati radnike i kada se neki ugasi, primjenjuje strategiju pokretanja
