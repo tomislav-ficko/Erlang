@@ -34,3 +34,8 @@
 % Koncept supervisor/worker u OTP-u:
 %           - Supervisor je vršni proces koji upravlja radnicima i implementira strategiju pokretanja radnika
 %           - Supervisor prati radnike i kada se neki ugasi, primjenjuje strategiju pokretanja
+
+% Aplikacije:
+%       - Osnovni element za pakiranje koda za distribuciju
+%       - Dijele se na Library (ne pokreće se) i Active (mogu se pokrenuti)
+%       - Sastoje se od direktorija src, ebin, priv, include, doc i test
