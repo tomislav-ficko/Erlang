@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+    # docker run -it --rm --name yd -h y.local kp_dist -sname Y
+    yd:
+        build: .
+        volumes:
+            - .:/usr/dir
+    # docker run -it --rm --name xd -h x.local --link yd:y kp_dist -sname X
+    xd:
+        build: .
+        volumes:
+            - .:/usr/dir
+        
